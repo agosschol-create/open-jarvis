@@ -11,6 +11,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -23,6 +24,13 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          accept-android-sdk-licenses: true
+          packages: |
+            platform-tools
+            platforms;android-34
+            platforms;android-35
+            platforms;android-36
 
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
