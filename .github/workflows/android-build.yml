@@ -22,12 +22,22 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Install Android SDK packages
+        run: |
+          set -e
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "Could not find sdkmanager in Android SDK"
+            exit 1
+          fi
+          echo "Using: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-35"
+
       - name: Build debug APK
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
           chmod +x ./gradlew
-          yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools" "platforms;android-35"
           ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
