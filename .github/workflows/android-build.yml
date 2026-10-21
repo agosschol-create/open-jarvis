@@ -22,21 +22,13 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          accept-android-sdk-licenses: true
-          packages: |
-            platform-tools
-            platforms;android-34
-            platforms;android-35
-            platforms;android-36
-
-      - name: Make Gradle wrapper executable
-        run: chmod +x ./gradlew
-
       - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          chmod +x ./gradlew
+          yes | sdkmanager --licenses || true
+          sdkmanager "platform-tools" "platforms;android-35"
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
